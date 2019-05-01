@@ -140,10 +140,11 @@ public class Controller {
     	try {
     		int size = Integer.parseInt(flightsNumber.getText());
     		airport.generateFlights(size);
+    		
     	}catch(NumberFormatException e){
     		
     	}
-    	airport.sortByFullHour();
+    
     }
     
     @FXML
@@ -158,16 +159,14 @@ public class Controller {
     	timeOrdering.setAlignment(Pos.CENTER_LEFT);
     	airport.updateCurrentTime();
     	date.setText(airport.getStringHour());
-    	tableView.setItems(oListFlights);
-    	updateList();
+    	tableView.setItems(updateList());
     	timeSearching.setText(airport.getTimeSearching());
     	yourFlight.setAlignment(Pos.CENTER);
    
     }
 
     public ObservableList<Flight> updateList(){
-    //	Flight[] array = airport.getFlights();
-    //	List<Flight> list = Arrays.asList(array);
+  
     	ObservableList<Flight> list = FXCollections.observableArrayList();
     	Flight first = airport.getFirst();
     	Flight actual = airport.getFirst();
@@ -177,7 +176,6 @@ public class Controller {
     		actual = actual.getNext();
     	}
     	list.add(actual);
-    	
 		return list;
     }
     
@@ -194,13 +192,7 @@ public class Controller {
     	}else if(option.equals("by destine")) {
     		yourFlight.setText(airport.searchDestineLinearS(cx));
     	}else if(option.equals("by gate")) {
-    		try {
-				yourFlight.setText(airport.searchByGateBinaryS(Integer.parseInt(cx)));
-			} catch (NumberFormatException e) {
-				yourFlight.setText("Please enter a number");
-			} catch (NoSortedElementsBinarySearchException e) {
-				yourFlight.setText(e.getMessage());
-			}
+		    yourFlight.setText(airport.searchByGateLinearS(Integer.parseInt(cx)));
     	}else if(option.equals("by date")) {
     		yourFlight.setText(airport.searchDateLinearS(cx));
     	}

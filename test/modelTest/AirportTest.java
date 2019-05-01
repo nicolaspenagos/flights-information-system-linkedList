@@ -228,12 +228,8 @@ class AirportTest {
 		SetUpScenary3();
 		a1.getFlights()[0]=f1;
 		a1.sortByGateBubble();
-		try {
-			assertTrue("The method is not working correctly", a1.searchByGateBinaryS(0).equals(f1.toString()));
-		} catch (NoSortedElementsBinarySearchException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	
+		assertTrue("The method is not working correctly", a1.searchByGateLinearS(0).equals(f1.toString()));
 	}
 
 }

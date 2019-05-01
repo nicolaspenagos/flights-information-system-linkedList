@@ -138,7 +138,6 @@ public class Airport {
 	
 	public Flight[] generateFlights(int size) {
 		int cc = 0;
-		
 		Flight actual = first;
 		
 		for (int i = 0; i < size; i++) {
@@ -163,7 +162,7 @@ public class Airport {
 				first.setPrev(first);
 				first.setNext(first);
 			}else {
-				
+		
 				actual = getLast();
 				Flight nextFlight = new  Flight(new CustomDate(), new CustomHour(), airlines[a], destines[d], (airlinesId[a]+ id), g);
 				cc++;
@@ -266,12 +265,19 @@ public class Airport {
 	}
 	
 	public String searchByTimeLinearS(String time) {
-		long timeX = System.currentTimeMillis();
 		Flight fx = null; 
-		for (int i = 0; i < flights.length; i++) {
-			if(time.equalsIgnoreCase(flights[i].getHour().toString())) {
-				fx = flights[i];
+		long timeX = System.currentTimeMillis();
+		Flight actual = first;
+		
+		while(actual.getNext()!=first&&fx==null) {
+			if(actual.getHour().toString().equalsIgnoreCase(time)) {
+				fx=actual; 
 			}
+			actual=actual.getNext();
+		}
+		
+		if(getLast().getHour().toString().equalsIgnoreCase(time)) {
+			fx=getLast();
 		}
 		long timeY = System.currentTimeMillis();
 		calculateTime2(timeX, timeY, "(linear)");
@@ -281,11 +287,19 @@ public class Airport {
 	public String searchFlightLinearS(String fn) {
 		Flight fx = null; 
 		long timeX = System.currentTimeMillis();
-		for (int i = 0; i < flights.length; i++) {
-			if(fn.equalsIgnoreCase(flights[i].getFlightNumber())) {
-				fx = flights[i];
+		Flight actual = first;
+		
+		while(actual.getNext()!=first&&fx==null) {
+			if(actual.getFlightNumber().toString().equalsIgnoreCase(fn)) {
+				fx=actual; 
 			}
+			actual=actual.getNext();
 		}
+		
+		if(getLast().getFlightNumber().toString().equalsIgnoreCase(fn)) {
+			fx=getLast();
+		}
+		
 		long timeY = System.currentTimeMillis();
 		calculateTime2(timeX, timeY, "(linear)");
 		return printF(fx);
@@ -294,10 +308,16 @@ public class Airport {
 	public String searchDateLinearS(String fn) {
 		Flight fx = null; 
 		long timeX = System.currentTimeMillis();
-		for (int i = 0; i < flights.length; i++) {
-			if(fn.equalsIgnoreCase(flights[i].getDate().toString())) {
-				fx = flights[i];
+		Flight actual = first;
+		
+		while(actual.getNext()!=first&&fx==null) {
+			if(actual.getDate().toString().equalsIgnoreCase(fn)) {
+				fx=actual; 
 			}
+			actual=actual.getNext();
+		}
+		if(getLast().getDate().toString().equalsIgnoreCase(fn)) {
+			fx=getLast();
 		}
 		long timeY = System.currentTimeMillis();
 		calculateTime2(timeX, timeY, "(linear)");
@@ -306,10 +326,15 @@ public class Airport {
 	public String searchAirlineLinearS(String fn) {
 		Flight fx = null; 
 		long timeX = System.currentTimeMillis();
-		for (int i = 0; i < flights.length; i++) {
-			if(fn.equalsIgnoreCase(flights[i].getAirline())) {
-				fx = flights[i];
+		Flight actual = first;
+		while(actual.getNext()!=first&&fx==null) {
+			if(actual.getAirline().toString().equalsIgnoreCase(fn)) {
+				fx=actual; 
 			}
+			actual=actual.getNext();
+		}
+		if(getLast().getAirline().toString().equalsIgnoreCase(fn)) {
+			fx=getLast();
 		}
 		long timeY = System.currentTimeMillis();
 		calculateTime2(timeX, timeY, "(linear)");
@@ -319,42 +344,37 @@ public class Airport {
 	public String searchDestineLinearS(String fn) {
 		Flight fx = null; 
 		long timeX = System.currentTimeMillis();
-		for (int i = 0; i < flights.length; i++) {
-			if(fn.equalsIgnoreCase(flights[i].getDestinationCity())) {
-				fx = flights[i];
+		Flight actual = first;
+		while(actual.getNext()!=first&&fx==null) {
+			if(actual.getDestinationCity().toString().equalsIgnoreCase(fn)) {
+				fx=actual; 
 			}
+			actual=actual.getNext();
+		}
+		if(getLast().getDestinationCity().toString().equalsIgnoreCase(fn)) {
+			fx=getLast();
 		}
 		long timeY = System.currentTimeMillis();
 		calculateTime2(timeX, timeY, "(linear)");
 		return printF(fx);
 	}
 	
-	public String searchByGateBinaryS(int x) throws NoSortedElementsBinarySearchException{
-			if(typeOfOrder.contentEquals(GB)) {
-				Flight fx = null;
-				long timeX = System.currentTimeMillis();
-				
-				int low = 0;
-				int high = flights.length-1;
-				boolean founded = false;
-				
-				while(low <= high&&!founded) {
-					int mid = (low + high)/2;
-					if(flights[mid].getGate()<x) {
-						low = mid +1;
-					}else if(flights[mid].getGate()>x) {
-						high = mid -1;
-					}else {
-						fx = flights[mid];
-						founded = true;  
-					}
-				}	
-				long timeY = System.currentTimeMillis();
-				calculateTime2(timeX, timeY, "(Binary)");
-				return printF(fx); 
-			}else {
-				throw new NoSortedElementsBinarySearchException();
+	public String searchByGateLinearS(int x){
+		Flight fx = null; 
+		long timeX = System.currentTimeMillis();
+		Flight actual = first;
+		while(actual.getNext()!=first&&fx==null) {
+			if(actual.getGate()==x) {
+				fx=actual; 
 			}
+			actual=actual.getNext();
+		}
+		if(getLast().getGate()==x) {
+			fx=getLast();
+		}
+		long timeY = System.currentTimeMillis();
+		calculateTime2(timeX, timeY, "(linear)");
+		return printF(fx);
 	}
 	
 	
