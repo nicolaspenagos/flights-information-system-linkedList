@@ -20,7 +20,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="685.0" prefWidth="1242.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userinterface.Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1242.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="userinterface.Controller">
    <top>
       <AnchorPane prefHeight="84.0" prefWidth="1242.0" style="-fx-background-color: black;" BorderPane.alignment="CENTER">
          <children>
@@ -49,7 +49,7 @@
                 <Menu mnemonicParsing="false" text="ORDER">
                   <items>
                     <MenuItem mnemonicParsing="false" onAction="#sortByHour" text="By hour" />
-                        <MenuItem mnemonicParsing="false" onAction="#sortByTerminal" text="By terminal" />
+                        <MenuItem mnemonicParsing="false" onAction="#sortByTerminal" text="By gate" />
                         <MenuItem mnemonicParsing="false" onAction="#sortByDate" text="By date" />
                         <MenuItem mnemonicParsing="false" onAction="#sortByAirline" text="By airline" />
                         <MenuItem mnemonicParsing="false" onAction="#sortByDestine" text="By destine" />
@@ -62,7 +62,7 @@
       </AnchorPane>
    </top>
    <right>
-      <Pane prefHeight="602.0" prefWidth="462.0" style="-fx-background-color: black;" BorderPane.alignment="CENTER">
+      <Pane prefHeight="606.0" prefWidth="456.0" style="-fx-background-color: black;" BorderPane.alignment="CENTER">
          <children>
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="88.0" layoutX="24.0" layoutY="-1.0" stroke="WHITE" strokeType="INSIDE" width="415.0" />
             <Label layoutX="149.0" layoutY="3.0" text="The flights were ordered by:" textFill="WHITE">
@@ -126,7 +126,7 @@
                   <Font name="Lucida Console" size="12.0" />
                </font>
             </Label>
-            <ImageView fitHeight="87.0" fitWidth="314.0" layoutX="94.0" layoutY="509.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="87.0" fitWidth="314.0" layoutX="66.0" layoutY="509.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@images/marcaPais-01.jpg" />
                </image>
@@ -162,8 +162,8 @@
                   <Font name="CamingoCode Regular" size="12.0" />
                </font>
             </Label>
-            <Button layoutX="370.0" layoutY="546.0" mnemonicParsing="false" onAction="#nextb" text="&gt;" />
-            <Button layoutX="130.0" layoutY="545.0" mnemonicParsing="false" onAction="#prevb" text="&lt;" />
+            <Button layoutX="352.0" layoutY="542.0" mnemonicParsing="false" onAction="#nextb" text="&gt;" />
+            <Button layoutX="95.0" layoutY="545.0" mnemonicParsing="false" onAction="#prevb" text="&lt;" />
          </children></Pane>
    </right>
    <center>

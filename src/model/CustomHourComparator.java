@@ -8,7 +8,6 @@ public class CustomHourComparator implements Comparator<Flight>{
 		
 	}
 
-	@Override
 	public int compare(Flight f1, Flight f2) {
 		
 		int comparator;

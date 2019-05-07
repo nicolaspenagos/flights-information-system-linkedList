@@ -1,8 +1,7 @@
 package userinterface;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
+
 
 import customsThreads.GUIUpdateControllThread;
 import javafx.collections.FXCollections;
@@ -89,7 +88,6 @@ public class Controller {
     
     	try {
 			airport = new Airport();
-		 //   airport.sortByFullHour();
 		    oListFlights = updateList(); 
 			date.setText(airport.getStringHour());
 		} catch (IOException e) {
@@ -109,37 +107,33 @@ public class Controller {
     	guiThread = new GUIUpdateControllThread(this); 
     	guiThread.setDaemon(true);
     	guiThread.start();
+    	airport.cocktailSortHour();
     }
     
     @FXML
     void sortByHour(ActionEvent event) {
-    	airport.sortByFullHour();
+    	airport.cocktailSortHour();
     }
     
     @FXML
     void sortByFlightNumber(ActionEvent event) {
-    //	airport.sortByFlightNumberInsertion();
+    	airport.cocktailSortFlightNumber();
     }
 
     @FXML
     void sortByAirline(ActionEvent event) {
-    	airport.sortByAirlineSelection();
+    	airport.cocktailSortAirline();
     }
     
-    @FXML
-    void hola(ActionEvent event) {
-    	airport.sortByGateBubble();
-    	System.out.println("SortByTerminalCalled - controller");
-    }
-    
+ 
     @FXML
     void sortByTerminal(ActionEvent event) {
-    	airport.sortByGateBubble();
+    	airport.cocktailSortGate();
     }
     
     @FXML
     void sortByDate(ActionEvent event) {
-    	airport.cocktailSort();
+    	airport.cocktailSortDate();
     }
     @FXML
     void generate(ActionEvent event) {
@@ -147,7 +141,7 @@ public class Controller {
     	try {
     		int size = Integer.parseInt(flightsNumber.getText());
     		airport.generateFlights(size);
-    		
+    		airport.cocktailSortHour();	
     	}catch(NumberFormatException e){
     		
     	}
@@ -156,7 +150,7 @@ public class Controller {
     
     @FXML
     void sortByDestine(ActionEvent event) {
-    	airport.sortByDestineComparator();
+    	airport.cocktailSortDestine();
     }
     
     public void update() {
@@ -166,7 +160,7 @@ public class Controller {
     	timeOrdering.setAlignment(Pos.CENTER_LEFT);
     	airport.updateCurrentTime();
     	date.setText(airport.getStringHour());
-    	tableView.setItems(updateList());
+    	tableView.setItems(showF());
     	timeSearching.setText(airport.getTimeSearching());
     	yourFlight.setAlignment(Pos.CENTER);
     	calculatePages();

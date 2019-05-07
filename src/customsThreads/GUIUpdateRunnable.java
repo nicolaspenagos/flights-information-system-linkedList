@@ -10,8 +10,7 @@ public class GUIUpdateRunnable implements Runnable{
 	}
 	@Override
 	public void run() {
-		gui.update();
-		
+		gui.update();	
 	}
 
 }

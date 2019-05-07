@@ -2,26 +2,17 @@ package model;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 
 
 
 public class Airport {
-	
-	public final static String HC = "HOUR - COMPARATOR"; 
-	public final static String DC = "DESTINE - COMPARATOR";
-	public final static String DCO ="DATE - COMPARABLE";
-	public final static String FNI = "F. NUMBER. - INSERTION";
-	public final static String GB = "GATE - BUBBLE";
-	public final static String AS = "AIRLINE - SELECTION";
-	
+		
 	//------------------------------
 	// Attributes
 	//------------------------------
@@ -59,6 +50,10 @@ public class Airport {
 	//------------------------------
 	// Getters and Setters 
 	//------------------------------
+	
+	public void setFirst(Flight fx) {
+		first=fx;
+	}
 	public Flight[] getFlights() {
 		return flights;
 	}
@@ -191,47 +186,6 @@ public class Airport {
 		return true; 
 	}
 	
-	public void sortByFullHour() {
-		typeOfOrder = HC;
-		long xTime = System.currentTimeMillis();
-		Arrays.sort(flights,new CustomHourComparator());
-		long yTime = System.currentTimeMillis();
-		calculateTime(xTime, yTime);
-	}
-	
-	public void sortByGateBubble() {
-		typeOfOrder = GB;
-		long timeX = System.currentTimeMillis();
-		Flight current = first;
-		int cc=0;
-		while(current.getNext()!=first&&cc<21) {
-			System.out.println(cc);
-			Flight second = current.getNext();
-			while(second.getNext()!=first&&cc<21) {
-				if(current.getGate()>second.getGate()) {
-					int temp=current.getGate();
-					current.setGate(second.getGate());
-					second.setGate(temp);
-					
-				}
-			}
-			cc++;
-			System.out.println(cc);
-		}
-		
-		long timeY = System.currentTimeMillis();
-		calculateTime(timeX, timeY);
-	}
-	
-	public void sortByDateComparable() {
-		typeOfOrder = DCO;
-		long timeX = System.currentTimeMillis();
-		Arrays.sort(flights);
-		long timeY = System.currentTimeMillis();
-		calculateTime(timeX, timeY);
-	}
-	
-	
 	public void calculateTime(long x, long y) {
 		long timeT = y-x;
 		timeOrdering = timeT + " ms";
@@ -242,42 +196,15 @@ public class Airport {
 		setTimeSearching(xx+" "+timeT + " ms");
 	}
 	
-	public void sortByAirlineSelection() {
-		typeOfOrder = AS;
-		long timeX=System.currentTimeMillis();
-		for (int i = 0; i<flights.length; i++) {
-			int pos=i;
-			String minS= flights[i].getAirline();
-			Flight min = flights[i];
-			for (int j = i; j < airlines.length; j++) {
-				if(minS.compareToIgnoreCase(flights[j].getAirline())>0) {
-					min=flights[j];
-					minS= flights[j].getAirline();
-					pos = j;
-				}
-			}
-			Flight temp = flights[i];
-			flights[i]  = min;
-			flights[pos]=temp;
-		}
-		long timeY=System.currentTimeMillis();
-		calculateTime(timeX, timeY);
-	}
-	
-	public void sortByDestineComparator() {
-		typeOfOrder = DC; 
-		long timeX = System.currentTimeMillis();
-		Arrays.sort(flights,new DestineComparator());
-		long timeY = System.currentTimeMillis();
-		calculateTime(timeX, timeY);
-	}
+
+
 	
 	public String searchByTimeLinearS(String time) {
 		Flight fx = null; 
 		long timeX = System.currentTimeMillis();
 		Flight actual = first;
 		
-		while(actual.getNext()!=first&&fx==null) {
+		while(actual.getNext()!=null&&fx==null) {
 			if(actual.getHour().toString().equalsIgnoreCase(time)) {
 				fx=actual; 
 			}
@@ -297,7 +224,7 @@ public class Airport {
 		long timeX = System.currentTimeMillis();
 		Flight actual = first;
 		
-		while(actual.getNext()!=first&&fx==null) {
+		while(actual.getNext()!=null&&fx==null) {
 			if(actual.getFlightNumber().toString().equalsIgnoreCase(fn)) {
 				fx=actual; 
 			}
@@ -397,25 +324,6 @@ public class Airport {
 	}
 	
 	
-	/*public void sortByFlightNumberInsertion() {
-		typeOfOrder = FNI; 
-		Flight[] toLinkedList = toArray();
-		System.out.println(toLinkedList.length);
-		long timeX = System.currentTimeMillis();
-		for (int i = 1; i < toLinkedList.length; i++) {
-			Flight aux = toLinkedList[i];
-			int j;
-			for (j=i-1; j >=0 && toLinkedList[j].getFlightNumber().compareTo(aux.getFlightNumber())>0; j--) {
-				toLinkedList[j+1] = toLinkedList[j];
-			}
-			toLinkedList[j+1] = aux;
-		 }
-		
-		toLinkedList(toLinkedList);
-		long timeY = System.currentTimeMillis();
-		calculateTime(timeX, timeY);	
-	}*/
-	
 	public void toLinkedList(Flight[] x) {
 		int counter=0;
 		first=x[counter];
@@ -462,17 +370,19 @@ public class Airport {
 		return min;
 	}
 	
-	public void cocktailSort() {
-if(first != null) {
+	public void cocktailSortDate() {
+		long timeX = System.currentTimeMillis();
+		typeOfOrder = "cocktailSort";
+		if(first != null) {
 			
 			boolean changed = true;
 			while(changed) {
 				Flight currentNode = first;
 				changed = false;
-				//System.out.println("== NEW ITERATION A ==");
+		
 				while(currentNode.getNext() != null) {
 					Flight nextNode = currentNode.getNext();
-					//System.out.println(currentNode+" ? "+nextNode);
+				
 					if(currentNode.compareTo(nextNode)>0) {
 						if(currentNode.getPrev()!=null) {
 							currentNode.getPrev().setNext(nextNode);
@@ -498,10 +408,10 @@ if(first != null) {
 					}
 				}
 				
-				//System.out.println("== NEW ITERATION B ==");
+			
 				while(currentNode.getPrev() != null) {
 					Flight prevNode = currentNode.getPrev();
-					//System.out.println(currentNode+" ? "+prevNode);
+	
 					if(currentNode.compareTo(prevNode)<0) {
 						if(currentNode.getNext()!=null) {
 							currentNode.getNext().setPrev(prevNode);
@@ -526,6 +436,358 @@ if(first != null) {
 				}
 			}
 		}
+		long timeY = System.currentTimeMillis();
+		calculateTime(timeX, timeY);	
+	}
+	
+	public void cocktailSortGate() {
+		long timeX = System.currentTimeMillis();
+		typeOfOrder = "cocktailSort";
+		if(first != null) {
+			
+			boolean changed = true;
+			while(changed) {
+				Flight currentNode = first;
+				changed = false;
+		
+				while(currentNode.getNext() != null) {
+					Flight nextNode = currentNode.getNext();
+				
+					if(currentNode.getGate()>nextNode.getGate()) {
+						if(currentNode.getPrev()!=null) {
+							currentNode.getPrev().setNext(nextNode);
+						}
+						if(nextNode.getNext()!=null) {
+							nextNode.getNext().setPrev(currentNode);
+						}
+						
+						currentNode.setNext(nextNode.getNext());
+						nextNode.setPrev(currentNode.getPrev());
+						currentNode.setPrev(nextNode);
+						nextNode.setNext(currentNode);
+						
+						
+						if(currentNode==first) {
+							first = nextNode;
+						}
+						
+						changed = true;
+						
+					}else{
+						currentNode = currentNode.getNext();
+					}
+				}
+				
+			
+				while(currentNode.getPrev() != null) {
+					Flight prevNode = currentNode.getPrev();
+	
+					if(currentNode.getGate()<prevNode.getGate()) {
+						if(currentNode.getNext()!=null) {
+							currentNode.getNext().setPrev(prevNode);
+						}
+						if(prevNode.getPrev()!=null) {
+							prevNode.getPrev().setNext(currentNode);
+						}
+						
+						currentNode.setPrev(prevNode.getPrev());
+						prevNode.setNext(currentNode.getNext());
+						currentNode.setNext(prevNode);
+						prevNode.setPrev(currentNode);
+						
+						if(prevNode==first) {
+							first = currentNode;
+						}
+						
+						changed = true;
+					}else{
+						currentNode = currentNode.getPrev();
+					}					
+				}
+			}
+		}
+		long timeY = System.currentTimeMillis();
+		calculateTime(timeX, timeY);	
+	}
+	
+	public void cocktailSortHour() {
+		long timeX = System.currentTimeMillis();
+		typeOfOrder = "cocktailSort\n comparator";
+		if(first != null) {
+			
+			boolean changed = true;
+			while(changed) {
+				Flight currentNode = first;
+				changed = false;
+				
+				while(currentNode.getNext() != null) {
+					Flight nextNode = currentNode.getNext();
+				
+					if(new CustomHourComparator().compare(currentNode, nextNode)>0) {
+						if(currentNode.getPrev()!=null) {
+							currentNode.getPrev().setNext(nextNode);
+						}
+						if(nextNode.getNext()!=null) {
+							nextNode.getNext().setPrev(currentNode);
+						}
+						
+						currentNode.setNext(nextNode.getNext());
+						nextNode.setPrev(currentNode.getPrev());
+						currentNode.setPrev(nextNode);
+						nextNode.setNext(currentNode);
+						
+						
+						if(currentNode==first) {
+							first = nextNode;
+						}
+						
+						changed = true;
+						
+					}else{
+						currentNode = currentNode.getNext();
+					}
+				}
+				
+			
+				while(currentNode.getPrev() != null) {
+					Flight prevNode = currentNode.getPrev();
+	
+					if(new CustomHourComparator().compare(currentNode, prevNode)<0) {
+						if(currentNode.getNext()!=null) {
+							currentNode.getNext().setPrev(prevNode);
+						}
+						if(prevNode.getPrev()!=null) {
+							prevNode.getPrev().setNext(currentNode);
+						}
+						
+						currentNode.setPrev(prevNode.getPrev());
+						prevNode.setNext(currentNode.getNext());
+						currentNode.setNext(prevNode);
+						prevNode.setPrev(currentNode);
+						
+						if(prevNode==first) {
+							first = currentNode;
+						}
+						
+						changed = true;
+					}else{
+						currentNode = currentNode.getPrev();
+					}					
+				}
+			}
+		}
+		long timeY = System.currentTimeMillis();
+		calculateTime(timeX, timeY);	
+	}
+	
+	public void cocktailSortFlightNumber() {
+		long timeX = System.currentTimeMillis();
+		typeOfOrder = "cocktailSort\n comparator";
+		if(first != null) {
+			
+			boolean changed = true;
+			while(changed) {
+				Flight currentNode = first;
+				changed = false;
+				
+				while(currentNode.getNext() != null) {
+					Flight nextNode = currentNode.getNext();
+				
+					if(currentNode.getFlightNumber().compareTo(nextNode.getFlightNumber())>0) {
+						if(currentNode.getPrev()!=null) {
+							currentNode.getPrev().setNext(nextNode);
+						}
+						if(nextNode.getNext()!=null) {
+							nextNode.getNext().setPrev(currentNode);
+						}
+						
+						currentNode.setNext(nextNode.getNext());
+						nextNode.setPrev(currentNode.getPrev());
+						currentNode.setPrev(nextNode);
+						nextNode.setNext(currentNode);
+						
+						
+						if(currentNode==first) {
+							first = nextNode;
+						}
+						
+						changed = true;
+						
+					}else{
+						currentNode = currentNode.getNext();
+					}
+				}
+				
+			
+				while(currentNode.getPrev() != null) {
+					Flight prevNode = currentNode.getPrev();
+	
+					if(currentNode.getFlightNumber().compareTo(prevNode.getFlightNumber())<0) {
+						if(currentNode.getNext()!=null) {
+							currentNode.getNext().setPrev(prevNode);
+						}
+						if(prevNode.getPrev()!=null) {
+							prevNode.getPrev().setNext(currentNode);
+						}
+						
+						currentNode.setPrev(prevNode.getPrev());
+						prevNode.setNext(currentNode.getNext());
+						currentNode.setNext(prevNode);
+						prevNode.setPrev(currentNode);
+						
+						if(prevNode==first) {
+							first = currentNode;
+						}
+						
+						changed = true;
+					}else{
+						currentNode = currentNode.getPrev();
+					}					
+				}
+			}
+		}
+		long timeY = System.currentTimeMillis();
+		calculateTime(timeX, timeY);	
+	}
+	
+	public void cocktailSortAirline() {
+		long timeX = System.currentTimeMillis();
+		typeOfOrder = "cocktailSort\n comparator";
+		if(first != null) {
+			
+			boolean changed = true;
+			while(changed) {
+				Flight currentNode = first;
+				changed = false;
+				
+				while(currentNode.getNext() != null) {
+					Flight nextNode = currentNode.getNext();
+				
+					if(currentNode.getAirline().compareTo(nextNode.getAirline())>0) {
+						if(currentNode.getPrev()!=null) {
+							currentNode.getPrev().setNext(nextNode);
+						}
+						if(nextNode.getNext()!=null) {
+							nextNode.getNext().setPrev(currentNode);
+						}
+						
+						currentNode.setNext(nextNode.getNext());
+						nextNode.setPrev(currentNode.getPrev());
+						currentNode.setPrev(nextNode);
+						nextNode.setNext(currentNode);
+						
+						
+						if(currentNode==first) {
+							first = nextNode;
+						}
+						
+						changed = true;
+						
+					}else{
+						currentNode = currentNode.getNext();
+					}
+				}
+				
+			
+				while(currentNode.getPrev() != null) {
+					Flight prevNode = currentNode.getPrev();
+	
+					if(currentNode.getAirline().compareTo(prevNode.getAirline())<0) {
+						if(currentNode.getNext()!=null) {
+							currentNode.getNext().setPrev(prevNode);
+						}
+						if(prevNode.getPrev()!=null) {
+							prevNode.getPrev().setNext(currentNode);
+						}
+						
+						currentNode.setPrev(prevNode.getPrev());
+						prevNode.setNext(currentNode.getNext());
+						currentNode.setNext(prevNode);
+						prevNode.setPrev(currentNode);
+						
+						if(prevNode==first) {
+							first = currentNode;
+						}
+						
+						changed = true;
+					}else{
+						currentNode = currentNode.getPrev();
+					}					
+				}
+			}
+		}
+		long timeY = System.currentTimeMillis();
+		calculateTime(timeX, timeY);	
+	}
+	
+	public void cocktailSortDestine() {
+		long timeX = System.currentTimeMillis();
+		typeOfOrder = "cocktailSort\n comparator";
+		if(first != null) {
+			
+			boolean changed = true;
+			while(changed) {
+				Flight currentNode = first;
+				changed = false;
+				
+				while(currentNode.getNext() != null) {
+					Flight nextNode = currentNode.getNext();
+				
+					if(new DestineComparator().compare(currentNode, nextNode)>0) {
+						if(currentNode.getPrev()!=null) {
+							currentNode.getPrev().setNext(nextNode);
+						}
+						if(nextNode.getNext()!=null) {
+							nextNode.getNext().setPrev(currentNode);
+						}
+						
+						currentNode.setNext(nextNode.getNext());
+						nextNode.setPrev(currentNode.getPrev());
+						currentNode.setPrev(nextNode);
+						nextNode.setNext(currentNode);
+						
+						
+						if(currentNode==first) {
+							first = nextNode;
+						}
+						
+						changed = true;
+						
+					}else{
+						currentNode = currentNode.getNext();
+					}
+				}
+				
+			
+				while(currentNode.getPrev() != null) {
+					Flight prevNode = currentNode.getPrev();
+	
+					if(new DestineComparator().compare(currentNode, prevNode)<0) {
+						if(currentNode.getNext()!=null) {
+							currentNode.getNext().setPrev(prevNode);
+						}
+						if(prevNode.getPrev()!=null) {
+							prevNode.getPrev().setNext(currentNode);
+						}
+						
+						currentNode.setPrev(prevNode.getPrev());
+						prevNode.setNext(currentNode.getNext());
+						currentNode.setNext(prevNode);
+						prevNode.setPrev(currentNode);
+						
+						if(prevNode==first) {
+							first = currentNode;
+						}
+						
+						changed = true;
+					}else{
+						currentNode = currentNode.getPrev();
+					}					
+				}
+			}
+		}
+		long timeY = System.currentTimeMillis();
+		calculateTime(timeX, timeY);	
 	}
 }
 

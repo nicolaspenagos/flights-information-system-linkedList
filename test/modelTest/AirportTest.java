@@ -16,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import model.Airport;
 import model.CustomDate;
 import model.CustomHour;
+import model.CustomHourComparator;
+import model.DestineComparator;
 import model.Flight;
 
 class AirportTest {
@@ -96,11 +98,15 @@ class AirportTest {
 	@Test
 	void generateFlightsTest() {
 		SetUpScenary2();
-		Flight[] array = a1.generateFlights(20);
-		assertTrue("The flights array were not generate", array instanceof Flight[]);
-		
-		for(int i=0; i<array.length-1; i++) {
-			assertTrue("The flights are not different", !(array[i].getFlightNumber().equals(array[i+1].getFlightNumber())));
+		a1.generateFlights(20);
+		Flight first  = a1.getFirst();
+		assertTrue("The flights array were not generate", first instanceof Flight);
+		Flight current = first;
+		Flight next = first.getNext();
+		while(current.getNext()!=null) {
+			assertTrue("The flights are not different", !(current.getFlightNumber().equals(next.getFlightNumber())));
+			current=current.getNext();
+			next=next.getNext();
 		}
 	}
 	
@@ -118,65 +124,73 @@ class AirportTest {
 	@Test
 	void sortByFullHourTest() {
 		SetUpScenary2(); 
-		Flight[] array = a1.getFlights();
-		a1.sortByFullHour();
-		for (int i = 0; i < array.length-1; i++) {
-			if(array[i].getHour().toString().charAt(6)=='A'&&array[i+1].getHour().toString().charAt(6)=='A') {
-				assertTrue("The array is not oerdered", array[i].getHour().toString().compareTo(array[i+1].getHour().toString())<=0);	
-			}else if(array[i].getHour().toString().charAt(6)=='P'&&array[i+1].getHour().toString().charAt(6)=='P'){
-				assertTrue("The array is not oerdered", array[i].getHour().toString().compareTo(array[i+1].getHour().toString())<=0);
-			}
+		Flight current = a1.getFirst();
+		a1.cocktailSortHour();
+		while(current.getNext()!=null) {
+			Flight next = current.getNext();
+			assertTrue("The array is not ordered", new CustomHourComparator().compare(current, next)<=0);
+			current=current.getNext();
 		}
 	}
 	
 	@Test
-	void sortByGateBubbleTest() {
+	void sortCocktailGateTest() {
 		SetUpScenary2(); 
-		Flight[] array = a1.getFlights();
-		a1.sortByGateBubble();
-		for (int i = 0; i < array.length-1; i++) {
-			assertTrue("The array is not oerdered",array[i].getGate()<=array[i+1].getGate());
+		Flight current = a1.getFirst();
+		a1.cocktailSortGate();
+		while(current.getNext()!=null) {
+			Flight next = current.getNext();
+			assertTrue("The array is not ordered", current.getGate()<=next.getGate() );
+			current=current.getNext();
 		}
 	}
 	
 	@Test
-	void sortByDateComparable() {
-		SetUpScenary2(); 
-		Flight[] array = a1.getFlights();
-		a1.sortByDateComparable();
-		for (int i = 0; i < array.length-1; i++) {
-		
-				assertTrue("The array is not oerdered", array[i].getDate().toString().compareTo(array[i+1].getDate().toString())<=0||array[i].getDate().toString().compareTo(array[i+1].getDate().toString())>0);	
+	void sortCocktailDate() {
+		SetUpScenary2();  
+		Flight current = a1.getFirst();
+		a1.cocktailSortDate();
+		while(current.getNext()!=null) {
+			Flight next = current.getNext();
+			assertTrue("The array is not ordered", current.compareTo(next)<=0 );
+			current=current.getNext();
 		}
 	}
 	
 	@Test
 	void sortByAirlineSelectionTest() {
 		SetUpScenary2(); 
-		Flight[] array = a1.getFlights();
-		a1.sortByAirlineSelection();
-		for (int i = 0; i < array.length-1; i++) {
-			assertTrue("The array is not oerdered", array[i].getAirline().compareTo(array[i+1].getAirline())<=0);	
+		Flight current = a1.getFirst();
+		a1.cocktailSortAirline();
+	
+		while(current.getNext()!=null) {
+			Flight next = current.getNext();
+			assertTrue("The array is not ordered", current.getAirline().compareTo(next.getAirline())<=0 );
+			current=current.getNext();
 		}
 	}
 	
 	@Test
 	void sortByDestineComparatorTest() {
 		SetUpScenary2(); 
-		Flight[] array = a1.getFlights();
-		a1.sortByDestineComparator();
-		for (int i = 0; i < array.length-1; i++) {
-			assertTrue("The array is not oerdered", array[i].getDestinationCity().compareTo(array[i+1].getDestinationCity())<=0);	
+		Flight current = a1.getFirst();
+		a1.cocktailSortDestine();
+		while(current.getNext()!=null) {
+			Flight next = current.getNext();
+			assertTrue("The array is not ordered", (new DestineComparator().compare(current, next))<=0 );
+			current=current.getNext();
 		}
 	}
 	
 	@Test
-	void sortByFlightNumberInsertionTest() {
+	void sortByFlightNumberTest() {
 		SetUpScenary2(); 
-		Flight[] array = a1.getFlights();
-	//	a1.sortByFlightNumberInsertion();
-		for (int i = 0; i < array.length-1; i++) {
-			assertTrue("The array is not oerdered", array[i].getFlightNumber().compareTo(array[i+1].getFlightNumber())<=0);	
+		Flight current = a1.getFirst();
+		a1.cocktailSortFlightNumber();
+		while(current.getNext()!=null) {
+			Flight next = current.getNext();
+			assertTrue("The array is not ordered", current.getFlightNumber().compareTo(next.getFlightNumber())<0 );
+			current=current.getNext();
 		}
 	}
 	
@@ -212,24 +226,13 @@ class AirportTest {
 	void linearSTests() {
 		SetUpScenary2();
 		SetUpScenary3();
-		a1.getFlights()[0]=f1;
+		a1.setFirst(f1);
 	
 		assertTrue("The method is not working correctly", a1.searchAirlineLinearS("AVIANCAa").equals(f1.toString()));
 		assertTrue("The method is not working correctly", a1.searchByTimeLinearS(f1.getHour().toString()).equals(f1.toString()));
-		assertTrue("The method is not working correctly", a1.searchDateLinearS(f1.getDate().toString()).equals(f1.toString()));
-		assertTrue("The method is not working correctly", a1.searchDestineLinearS("NEW YORKk").equals(f1.toString()));
+        assertTrue("The method is not working correctly", a1.searchDestineLinearS("NEW YORKk").equals(f1.toString()));
 		assertTrue("The method is not working correctly", a1.searchFlightLinearS("AF45").equals(f1.toString()));
 		
 	}
 	
-	@Test
-	void binarySearchTest() {
-		SetUpScenary2();
-		SetUpScenary3();
-		a1.getFlights()[0]=f1;
-		a1.sortByGateBubble();
-	
-		assertTrue("The method is not working correctly", a1.searchByGateLinearS(0).equals(f1.toString()));
-	}
-
 }
