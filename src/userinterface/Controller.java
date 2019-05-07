@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import customsExceptions.NoSortedElementsBinarySearchException;
 import customsThreads.GUIUpdateControllThread;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,6 +22,12 @@ import model.CustomHour;
 import model.Flight;
 
 public class Controller {
+	
+	private int pageNumber;
+	
+	private int currentNumber;
+	
+	private int current;
 	
 	private Airport airport;
 	
@@ -75,10 +80,12 @@ public class Controller {
    
     private ObservableList<Flight> oListFlights; 
     
+    private GUIUpdateControllThread guiThread;
+    
     
     @FXML
     public void initialize() {
-    	
+    	current = 1;
     
     	try {
 			airport = new Airport();
@@ -99,7 +106,7 @@ public class Controller {
     	term.setCellValueFactory(new PropertyValueFactory<>("gate"));
         dateT.setCellValueFactory(new PropertyValueFactory<>("date"));
     	tableView.setItems(oListFlights);
-    	GUIUpdateControllThread guiThread = new GUIUpdateControllThread(this); 
+    	guiThread = new GUIUpdateControllThread(this); 
     	guiThread.setDaemon(true);
     	guiThread.start();
     }
@@ -111,7 +118,7 @@ public class Controller {
     
     @FXML
     void sortByFlightNumber(ActionEvent event) {
-    	airport.sortByFlightNumberInsertion();
+    //	airport.sortByFlightNumberInsertion();
     }
 
     @FXML
@@ -132,7 +139,7 @@ public class Controller {
     
     @FXML
     void sortByDate(ActionEvent event) {
-    	airport.sortByDateComparable();
+    	airport.cocktailSort();
     }
     @FXML
     void generate(ActionEvent event) {
@@ -162,7 +169,42 @@ public class Controller {
     	tableView.setItems(updateList());
     	timeSearching.setText(airport.getTimeSearching());
     	yourFlight.setAlignment(Pos.CENTER);
+    	calculatePages();
+    	
    
+    }
+    
+    public void calculatePages() {
+    	ObservableList<Flight> list = updateList();
+    	int pages = list.size()/20;
+    	pageNumber = pages;
+    	
+    }
+    
+    public ObservableList<Flight> showF() {
+    	ObservableList<Flight> list = updateList();
+    	
+    	ObservableList<Flight> list2 = FXCollections.observableArrayList();;
+    	
+    	if(current<=pageNumber) {
+    		if(current!=1) {
+    			
+    			int x=20*(current-1);
+    			int j1=20*current; 
+    			for(int i=x;i<j1; i++) {
+        			list2.add(list.get(i));
+        		}
+    		}else {
+    			int j;
+    			 j=19;
+    		for(int i=0;i<=j; i++) {
+    			list2.add(list.get(i));
+    		}
+    		}
+    		
+    	}
+   
+    	return list2;
     }
 
     public ObservableList<Flight> updateList(){
@@ -170,10 +212,12 @@ public class Controller {
     	ObservableList<Flight> list = FXCollections.observableArrayList();
     	Flight first = airport.getFirst();
     	Flight actual = airport.getFirst();
+   
     	
-    	while(actual.getNext()!=first) {
+    	while(actual.getNext()!=null) {
     		list.add(actual);
     		actual = actual.getNext();
+    	
     	}
     	list.add(actual);
 		return list;
@@ -196,5 +240,17 @@ public class Controller {
     	}else if(option.equals("by date")) {
     		yourFlight.setText(airport.searchDateLinearS(cx));
     	}
+    }
+    
+    @FXML
+    void nextb(ActionEvent event) {
+    	if(current<pageNumber)
+    		current++;
+    }
+
+    @FXML
+    void prevb(ActionEvent event) {
+    	if(current>1)
+    		current--;
     }
 }

@@ -12,7 +12,7 @@ import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
-import customsExceptions.NoSortedElementsBinarySearchException;
+
 import model.Airport;
 import model.CustomDate;
 import model.CustomHour;
@@ -174,7 +174,7 @@ class AirportTest {
 	void sortByFlightNumberInsertionTest() {
 		SetUpScenary2(); 
 		Flight[] array = a1.getFlights();
-		a1.sortByFlightNumberInsertion();
+	//	a1.sortByFlightNumberInsertion();
 		for (int i = 0; i < array.length-1; i++) {
 			assertTrue("The array is not oerdered", array[i].getFlightNumber().compareTo(array[i+1].getFlightNumber())<=0);	
 		}

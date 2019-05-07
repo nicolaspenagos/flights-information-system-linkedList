@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-import customsExceptions.NoSortedElementsBinarySearchException;
+
 
 public class Airport {
 	
@@ -159,8 +159,8 @@ public class Airport {
 			if(first==null) {
 				first = new Flight(new CustomDate(), new CustomHour(), airlines[a], destines[d], (airlinesId[a]+ id), g);
 				cc++;
-				first.setPrev(first);
-				first.setNext(first);
+				first.setPrev(null);
+			//	first.setNext(first);
 			}else {
 		
 				actual = getLast();
@@ -168,8 +168,8 @@ public class Airport {
 				cc++;
 				actual.setNext(nextFlight);
 				nextFlight.setPrev(actual);
-				nextFlight.setNext(first);
-				first.setPrev(nextFlight);
+				nextFlight.setNext(null);
+				first.setPrev(null);
 				if(cc==2) {
 					first.setNext(nextFlight);
 				}
@@ -202,15 +202,23 @@ public class Airport {
 	public void sortByGateBubble() {
 		typeOfOrder = GB;
 		long timeX = System.currentTimeMillis();
-		for (int i = flights.length; i>0 ; i--) {
-			for (int j = 0; j < i-1; j++) {
-				if(flights[j].getGate()>flights[j+1].getGate()) {
-					Flight temp = flights[j+1]; 
-					flights[j+1]=flights[j];
-					flights[j]= temp;
+		Flight current = first;
+		int cc=0;
+		while(current.getNext()!=first&&cc<21) {
+			System.out.println(cc);
+			Flight second = current.getNext();
+			while(second.getNext()!=first&&cc<21) {
+				if(current.getGate()>second.getGate()) {
+					int temp=current.getGate();
+					current.setGate(second.getGate());
+					second.setGate(temp);
+					
 				}
 			}
+			cc++;
+			System.out.println(cc);
 		}
+		
 		long timeY = System.currentTimeMillis();
 		calculateTime(timeX, timeY);
 	}
@@ -327,7 +335,7 @@ public class Airport {
 		Flight fx = null; 
 		long timeX = System.currentTimeMillis();
 		Flight actual = first;
-		while(actual.getNext()!=first&&fx==null) {
+		while(actual.getNext()!=null&&fx==null) {
 			if(actual.getAirline().toString().equalsIgnoreCase(fn)) {
 				fx=actual; 
 			}
@@ -345,7 +353,7 @@ public class Airport {
 		Flight fx = null; 
 		long timeX = System.currentTimeMillis();
 		Flight actual = first;
-		while(actual.getNext()!=first&&fx==null) {
+		while(actual.getNext()!=null&&fx==null) {
 			if(actual.getDestinationCity().toString().equalsIgnoreCase(fn)) {
 				fx=actual; 
 			}
@@ -363,7 +371,7 @@ public class Airport {
 		Flight fx = null; 
 		long timeX = System.currentTimeMillis();
 		Flight actual = first;
-		while(actual.getNext()!=first&&fx==null) {
+		while(actual.getNext()!=null&&fx==null) {
 			if(actual.getGate()==x) {
 				fx=actual; 
 			}
@@ -389,38 +397,137 @@ public class Airport {
 	}
 	
 	
-	public void sortByFlightNumberInsertion() {
+	/*public void sortByFlightNumberInsertion() {
 		typeOfOrder = FNI; 
+		Flight[] toLinkedList = toArray();
+		System.out.println(toLinkedList.length);
 		long timeX = System.currentTimeMillis();
-		for (int i = 1; i < flights.length; i++) {
-			Flight aux = flights[i];
+		for (int i = 1; i < toLinkedList.length; i++) {
+			Flight aux = toLinkedList[i];
 			int j;
-			for (j=i-1; j >=0 && flights[j].getFlightNumber().compareTo(aux.getFlightNumber())>0; j--) {
-				flights[j+1] = flights[j];
+			for (j=i-1; j >=0 && toLinkedList[j].getFlightNumber().compareTo(aux.getFlightNumber())>0; j--) {
+				toLinkedList[j+1] = toLinkedList[j];
 			}
-			flights[j+1] = aux;
+			toLinkedList[j+1] = aux;
 		 }
+		
+		toLinkedList(toLinkedList);
 		long timeY = System.currentTimeMillis();
 		calculateTime(timeX, timeY);	
+	}*/
+	
+	public void toLinkedList(Flight[] x) {
+		int counter=0;
+		first=x[counter];
+		Flight current=first;
+		while(counter<calculateSize()) {
+			current.setNext(x[counter+1]);
+			current.setPrev(x[counter-1]);
+			counter++;
+		}
+		
 	}
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	//*********************************************************************************************************************************
+	
+	private int calculateSize() {
+		Flight current = first;
+		int x=1;
+		while(current.getNext()!=null) {
+			x++;
+			current=current.getNext();
+		}
+		return x;
+	}
+
 	public Flight getFirst() {
 		return first;
 	}
 	
 	public Flight getLast() {
-		Flight actual = first;
-		if(first == null) {
-			actual = first;
-		}else{
-			while(actual.getNext()!=first) {
-				actual = actual.getNext();
+		Flight current = first;
+		while(current.getNext()!=null) {
+			current=current.getNext();
+		}
+		return current;
+	}
+	
+	public Flight getMin() {
+		Flight min = first;
+		Flight current = first;
+		while(current.getNext()!=null) {
+			if(current.getGate()>current.getNext().getGate()) {
+				min=current.getNext();
 			}
 		}
-		return actual;
+		current=current.getNext();
+		return min;
+	}
+	
+	public void cocktailSort() {
+if(first != null) {
+			
+			boolean changed = true;
+			while(changed) {
+				Flight currentNode = first;
+				changed = false;
+				//System.out.println("== NEW ITERATION A ==");
+				while(currentNode.getNext() != null) {
+					Flight nextNode = currentNode.getNext();
+					//System.out.println(currentNode+" ? "+nextNode);
+					if(currentNode.compareTo(nextNode)>0) {
+						if(currentNode.getPrev()!=null) {
+							currentNode.getPrev().setNext(nextNode);
+						}
+						if(nextNode.getNext()!=null) {
+							nextNode.getNext().setPrev(currentNode);
+						}
+						
+						currentNode.setNext(nextNode.getNext());
+						nextNode.setPrev(currentNode.getPrev());
+						currentNode.setPrev(nextNode);
+						nextNode.setNext(currentNode);
+						
+						
+						if(currentNode==first) {
+							first = nextNode;
+						}
+						
+						changed = true;
+						
+					}else{
+						currentNode = currentNode.getNext();
+					}
+				}
+				
+				//System.out.println("== NEW ITERATION B ==");
+				while(currentNode.getPrev() != null) {
+					Flight prevNode = currentNode.getPrev();
+					//System.out.println(currentNode+" ? "+prevNode);
+					if(currentNode.compareTo(prevNode)<0) {
+						if(currentNode.getNext()!=null) {
+							currentNode.getNext().setPrev(prevNode);
+						}
+						if(prevNode.getPrev()!=null) {
+							prevNode.getPrev().setNext(currentNode);
+						}
+						
+						currentNode.setPrev(prevNode.getPrev());
+						prevNode.setNext(currentNode.getNext());
+						currentNode.setNext(prevNode);
+						prevNode.setPrev(currentNode);
+						
+						if(prevNode==first) {
+							first = currentNode;
+						}
+						
+						changed = true;
+					}else{
+						currentNode = currentNode.getPrev();
+					}					
+				}
+			}
+		}
 	}
 }
+
+
 
